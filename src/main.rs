@@ -1,4 +1,10 @@
 /*
+    Here we add the do_something method from lib.rs to the scope of the functions in this file
+*/
+use demo_rust::do_something;
+use rand::{thread_rng, Rng};
+
+/*
     Variables in Rust are immutable by default (Safety, Concurrency, Speed)
 */
 fn main() {
@@ -87,4 +93,97 @@ fn main() {
         var = 101;
     }
     println!("var is {}", var);
+
+    do_something(12, 101.01);
+
+    let z = thread_rng().gen_range(0..100);
+    println!("random value is {}", z);
+
+    /*
+        Definition of tuple: tuples are entities with multiple values not necessarily the same type
+        For now tuples in RUST have a range of 12 members
+    */
+    let tuple = (1, "hi", 3.56, 99);
+    println!("tuple is {},{},{}", tuple.0, tuple.1, tuple.2);
+
+    /*
+        Here there is another way to access tuple members
+    */
+    let (quantity, name, id, digit) = tuple;
+    println!("quantity is {}, name: {}, id: {}, digit: {}", quantity, name, id, digit);
+
+    /*
+         Array definition is like the following and they are FIXES size
+    */
+    let buf = [1, 2, 3];
+    /*
+        Here we have an array with 3 zeroes
+    */
+    let buf2 = [0; 3];
+    /*
+        Here we defined an array with 3 i8 types. We can specify the type and the size explicitly
+    */
+    let buf3: [i8; 3] = [4, 5, 6];
+
+    /*
+        The condition has to be a boolean
+    */
+    if buf[1] == 2 {
+        println!("buf[1] == 2");
+    } else if buf[1] == 3 {
+        println!("buf[1] == 3");
+    } else {
+        println!("buf[1] == 4");
+    }
+
+    /*
+        Here we have an if expression which we return some value out of it, please notice we
+        have no ";" at the end of lines and no return as well,
+        but we have one at the end of the last curly brace.
+    */
+    let msg = if buf[1] == 2 {
+        "buf[1] == 2"
+    } else if buf[1] == 3 {
+        "buf[1] == 3"
+    } else {
+        "buf[1] == 4"
+    };
+    println!("msg: {}", msg);
+
+    loops(buf, buf2);
+}
+
+fn dizzy() -> bool { false }
+
+fn loops(buf: [i32; 3], buf2: [i32; 3]) {
+    loop {
+        if !dizzy() {
+            break;
+        }
+    }
+
+    while dizzy() {}
+
+    /*
+        Rust can iterate over any iterable value. iter() will iterate the array in order
+    */
+    for x in buf.iter() {
+        println!("value = {}", x);
+    }
+
+    for i in 0..buf2.len() {
+        println!("i = {}, value = {}", i, buf[i]);
+    }
+
+    let buf4 = [(1, 2), (3, 4), (5, 6)];
+    for (x, y) in buf4.iter() {
+        println!("x = {}, y = {}", x, y);
+    }
+
+    /*
+        Iterate in a RANGE
+    */
+    for num in 0..10 {
+        println!("num = {}", num);
+    }
 }

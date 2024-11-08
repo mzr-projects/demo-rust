@@ -150,7 +150,14 @@ fn main() {
     };
     println!("msg: {}", msg);
 
+    println!("############ Loops");
     loops(buf, buf2);
+    println!("############ strings");
+    strings();
+    println!("############ Ownership");
+    ownership();
+    println!("############ Reference");
+    reference_stuff();
 }
 
 fn dizzy() -> bool { false }
@@ -186,4 +193,111 @@ fn loops(buf: [i32; 3], buf2: [i32; 3]) {
     for num in 0..10 {
         println!("num = {}", num);
     }
+}
+
+fn strings() {
+    /*
+        Here word is an immutable string, known as string slice
+    */
+    let word = "Hello World";
+    let word_bytes = word.bytes();
+    println!("word_bytes = {:?}", word_bytes);
+
+    /*
+        my_string is a mutable string known as owned string
+    */
+    let mut my_string = String::from("Hello, Rust!");
+    println!("1st my_string: {}", my_string);
+    my_string = String::from("Mutable Hello, Rust!");
+    println!("2nd my_string: {}", my_string);
+
+    let slice_string_to_mutable_string = word.to_string();
+    println!("slice_string_to_owned_string = {}", slice_string_to_mutable_string);
+
+    let mut string_with_capacity = String::with_capacity(5);
+    string_with_capacity = String::from("sad_sad");
+    string_with_capacity.push('!');
+    string_with_capacity.push_str(", dont worry bro!");
+    println!("string_with_capacity = {}", string_with_capacity);
+}
+
+fn ownership() {
+    let mut string_with_capacity = String::with_capacity(5);
+    string_with_capacity = String::from("sad_sad");
+    /*
+        We can't use the following code because we have moved the string_with_capacity variable to
+        the s2 and that's no longer available to access:
+
+        let s2 = string_with_capacity;
+        println!("string_with_capacity = {}", string_with_capacity);
+
+        string_with_capacity stores in stack memory with a pointer, len and capacity push onto
+        the stack which the pointer points to an address in the HEAP section of the memory when
+        we use "let s2 = string_with_capacity" the pointer, len and capacity of the new s2 variable
+        points to the same heap address so rust will invalidate the string_with_capacity variable
+        because in RUST only one owner is valid.
+    */
+
+    /*
+        But if we want to just copy the value instead of moving it,
+        we can do just like the following
+    */
+    let string_with_capacity_clone = string_with_capacity.clone();
+    println!("string_with_capacity = {}", string_with_capacity);
+    println!("string_with_capacity_clone = {}", string_with_capacity_clone);
+
+    let s1 = String::from("hello");
+    do_stuff(s1);
+    /*
+        We cant use the following code because the s1 is moved to the function and cant be accessed.
+            println!("s1 = {}", s1);
+    */
+
+    let mut s3 = String::from("hello");
+    s3 = do_stuff(s3);
+    println!("s3 = {}", s3);
+}
+
+fn do_stuff(s: String) -> String {
+    s.to_uppercase()
+}
+
+fn reference_stuff() {
+    let s1 = String::from("abc");
+    /*
+        Here we pass a reference to do_stuff_with_reference, and the s1 retains the ownership of the
+        value.When we use reference,
+        RUST will create a pointer to s1 and references are immutable by default
+    */
+    do_stuff_with_reference(&s1);
+    /*
+        We can use s1 after passing the reference because the value never moved we are just passing
+        the reference
+    */
+    println!("s1 = {}", s1);
+
+    /*
+        Here we can change the value of string with by making it mutable
+    */
+    let mut s2 = String::from("abc");
+    do_stuff_with_reference_mut(&mut s2);
+}
+
+/*
+    The & indicates the reference to a type, here we have a reference to String type
+    here the do_stuff_with_reference borrows the reference from s1 in reference_stuff method
+*/
+fn do_stuff_with_reference(s: &String) {
+    println!("reference s1 = {}", s);
+}
+
+fn do_stuff_with_reference_mut(s: &mut String) {
+    /*
+        Here s. the "." itself will auto dereference s down into the actual value
+        we also can do like the following
+            (*s).insert_str(0,"Hi, ");
+        Here * will dereference s and gives us the value
+    */
+    s.insert_str(0, "Hi, ");
+    println!("reference s2 with mut = {}", s);
 }
